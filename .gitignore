@@ -1,5 +1,7 @@
 ./Caltech*
 ./Caltech*/*
+./Event*
+./RGB*
 
 logs/
 model/

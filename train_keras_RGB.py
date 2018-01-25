@@ -23,8 +23,8 @@ random.seed(os.urandom(9))
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", help="Dataset to train", default='./Caltech101-Big2/')  # 'Datasets/MNIST-Big/'
 parser.add_argument("--dimensions", help="Temporal dimensions to get from each sample", default=3)
-parser.add_argument("--max_batch_size", help="batch_size", default=16)
-parser.add_argument("--epochs", help="Number of epochs to train", default=200)
+parser.add_argument("--max_batch_size", help="batch_size", default=32)
+parser.add_argument("--epochs", help="Number of epochs to train", default=120)
 parser.add_argument("--width", help="width", default=224)
 parser.add_argument("--height", help="height", default=224)
 args = parser.parse_args()
@@ -42,7 +42,7 @@ print(str(n_classes) + ' Classes to train')
 train_data_dir = './Canny_Caltech101/TRAIN'
 validation_data_dir = './Event_Caltech101/TRAIN'
 nb_train_samples=32968
-nb_validation_samples=6627*2
+nb_validation_samples=6627
 
 model=tf.keras.applications.mobilenet.MobileNet(alpha=1.2,input_tensor=tf.keras.layers.Input(shape=(height, width, channels)), classes=n_classes, weights=None)
 
@@ -109,5 +109,12 @@ model.fit_generator(train_generator, steps_per_epoch=nb_train_samples // max_bat
 
 
 score = model.evaluate_generator(validation_generator, nb_validation_samples)
+print('big transformed')
+print(score)
+validation_data_dir = './Event2_Caltech101/TRAIN'
+validation_generator = test_datagen.flow_from_directory(validation_data_dir, target_size=(height, width),
+														batch_size=(max_batch_size), class_mode='categorical', shuffle=True)
+score = model.evaluate_generator(validation_generator, nb_validation_samples)
+print('normal transformed')
 print(score)
 

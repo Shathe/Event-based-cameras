@@ -24,6 +24,35 @@ def auto_canny(image, sigma=0.33):
 	return edged
 
 
+for imagePath in glob.glob('./Event*/*/*/*'):
+		# load the image, convert it to grayscale, and blur it slightly
+	print(imagePath)
+	try:
+	    os.remove(imagePath)
+	except OSError:
+	    pass
+
+
+for imagePath in glob.glob('./Caltech101-Normal2/TRAIN/*/*'):
+		# load the image, convert it to grayscale, and blur it slightly
+	if '_5' in imagePath:
+		print(imagePath)
+		image = cv2.imread(imagePath)
+
+		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		gray[gray>20]=255
+
+		kernel2 = np.ones((2, 2),np.uint8)
+		dilation = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel2)
+		blur2 = cv2.blur(dilation,(2,2))
+		blur2[blur2<100]=0
+		blur2[blur2>=100]=255
+
+		path = imagePath.replace('Caltech101-Normal2','Event2_Caltech101')
+
+		# show the images
+		print(path)
+		cv2.imwrite(path,blur2)
 
 
 for imagePath in glob.glob('./RGB_Caltech101/TRAIN/*/*'):
@@ -71,9 +100,10 @@ for imagePath in glob.glob('./Caltech101-Big2/TRAIN/*/*'):
 	image = cv2.imread(imagePath)
 
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	gray2 = gray.copy()
-	gray2[gray<150]=0
-	gray2[gray>=150]=255
+	kernel = np.ones((3, 3),np.uint8)
+	kernel2 = np.ones((2, 2),np.uint8)
+	gray = cv2.morphologyEx(gray, cv2.MORPH_OPEN, kernel2)
+	gray = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel2)
 
 	gray1 = gray.copy()
 	gray1[gray<50]=0
@@ -82,8 +112,8 @@ for imagePath in glob.glob('./Caltech101-Big2/TRAIN/*/*'):
 	path = imagePath.replace('Caltech101-Big2','Event_Caltech101')
 
 	path1 = path.replace(' ',' ')
-	path2 = path.replace('.png','ev2.png')
 	# show the images
 	print(path1)
 	cv2.imwrite(path1,gray1)
-	cv2.imwrite(path2,gray2)
+
+
