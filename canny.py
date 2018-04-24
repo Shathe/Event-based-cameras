@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 
 
 
-
+dict_test = {}
 
 
 
@@ -26,7 +26,15 @@ def auto_canny(image, sigma=0.33):
 
 for imagePath in glob.glob('./Event*/*/*/*'):
 		# load the image, convert it to grayscale, and blur it slightly
-	print(imagePath)
+	# print(imagePath)
+	try:
+	    os.remove(imagePath)
+	except OSError:
+	    pass
+
+for imagePath in glob.glob('./Canny_Caltech101*/*/*/*'):
+		# load the image, convert it to grayscale, and blur it slightly
+	# print(imagePath)
 	try:
 	    os.remove(imagePath)
 	except OSError:
@@ -36,7 +44,7 @@ for imagePath in glob.glob('./Event*/*/*/*'):
 for imagePath in glob.glob('./Caltech101-Normal2/TRAIN/*/*'):
 		# load the image, convert it to grayscale, and blur it slightly
 	if '_5' in imagePath:
-		print(imagePath)
+		# print(imagePath)
 		image = cv2.imread(imagePath)
 
 		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -51,13 +59,45 @@ for imagePath in glob.glob('./Caltech101-Normal2/TRAIN/*/*'):
 		path = imagePath.replace('Caltech101-Normal2','Event2_Caltech101')
 
 		# show the images
-		print(path)
+		# print(path)
 		cv2.imwrite(path,blur2)
 
+for imagePath in glob.glob('./Caltech101-Big2/TEST/*/*'):
+		# load the image, convert it to grayscale, and blur it slightly
+	#print(imagePath)
+	paths = imagePath.split('/')
+	name = paths[len(paths)-1].replace('.png','').replace('.jpg','')
+	clase = paths[len(paths)-2]
+	dict_test[clase+name]=1
+
+	image = cv2.imread(imagePath)
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	kernel = np.ones((3, 3),np.uint8)
+	kernel2 = np.ones((2, 2),np.uint8)
+	gray = cv2.morphologyEx(gray, cv2.MORPH_OPEN, kernel2)
+	gray = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel2)
+
+	gray1 = gray.copy()
+	gray1[gray<50]=0
+	gray1[gray>=50]=255
+
+	path = imagePath.replace('Caltech101-Big2','Event_Caltech101')
+
+	path1 = path.replace(' ',' ')
+	# show the images
+	# print(path1)
+	cv2.imwrite(path1,gray1)
 
 for imagePath in glob.glob('./RGB_Caltech101/TRAIN/*/*'):
 		# load the image, convert it to grayscale, and blur it slightly
 	print(imagePath)
+
+
+	paths = imagePath.split('/')
+	name = paths[len(paths)-1].replace('.png','').replace('.jpg','')
+	name = name.split('_')[1]
+	clase = paths[len(paths)-2]
+
 	image = cv2.imread(imagePath)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	blurred = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -77,7 +117,7 @@ for imagePath in glob.glob('./RGB_Caltech101/TRAIN/*/*'):
 	path2 = path.replace('.jpg','can1.jpg')
 	path3 = path.replace('.jpg','can2.jpg')
 	path4 = path.replace('.jpg','can3.jpg')
-	print(path1)
+	# print(path1)
 
 	wide[wide<100]=0
 	wide[wide>=100]=255
@@ -88,6 +128,12 @@ for imagePath in glob.glob('./RGB_Caltech101/TRAIN/*/*'):
 	dilation3[dilation3<100]=0
 	dilation3[dilation3>=100]=255
 
+	if clase+name in dict_test:
+
+		path1 = path.replace('TRAIN','TEST')
+		path2 = path.replace('TRAIN','TEST')
+		path3 = path.replace('TRAIN','TEST')
+		path4 = path.replace('TRAIN','TEST')
 
 	cv2.imwrite(path1,wide)
 	cv2.imwrite(path2,auto)
@@ -96,7 +142,7 @@ for imagePath in glob.glob('./RGB_Caltech101/TRAIN/*/*'):
 
 for imagePath in glob.glob('./Caltech101-Big2/TRAIN/*/*'):
 		# load the image, convert it to grayscale, and blur it slightly
-	print(imagePath)
+	# print(imagePath)
 	image = cv2.imread(imagePath)
 
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -113,7 +159,17 @@ for imagePath in glob.glob('./Caltech101-Big2/TRAIN/*/*'):
 
 	path1 = path.replace(' ',' ')
 	# show the images
-	print(path1)
+	# print(path1)
 	cv2.imwrite(path1,gray1)
+	'''
+	cv2.imwrite(path1.replace('.png','a.png'),gray1)
+	cv2.imwrite(path1.replace('.png','b.png'),gray1)
+	cv2.imwrite(path1.replace('.png','c.png'),gray1)
+	cv2.imwrite(path1.replace('.png','d.png'),gray1)
+	cv2.imwrite(path1.replace('.png','e.png'),gray1)
+	cv2.imwrite(path1.replace('.png','f.png'),gray1)
+	'''
+
+
 
 
